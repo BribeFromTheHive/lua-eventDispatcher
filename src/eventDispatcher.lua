@@ -25,7 +25,6 @@ WM("eventDispatcher", function(import, export, exportDefault)
       local callbacks = handlers[eventName]
       if(callbacks ~= nil) then
         if(specialCallback ~= nil) then
-          local counter = #callbacks
           for i = #callbacks, 1, -1 do
             if(callbacks[i] == specialCallback) then
               table.remove(callbacks, i)
@@ -42,16 +41,15 @@ WM("eventDispatcher", function(import, export, exportDefault)
     --- @param data 
     dispatch = function(eventName, data)
       local callbacks = handlers[eventName]
+      if(callbacks == nil) then
+        return
+      end
       local event = {
         name = eventName,
         data = data,
         stopPropagation = false
       }
-
-      if(callbacks == nil) then
-        return
-      end
-      for i,callback in pairs(callbacks) do
+      for i,callback in ipairs(callbacks) do
         callback(event)
         if(event.stopPropagation) then
           return
